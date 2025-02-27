@@ -20,6 +20,10 @@ def lambda_handler(event, context):
 
     print("EC2 instances started successfully.")
 
+
+--------------------------------------------------------------------------------------------------
+
+
 #Stopping Instance in a particular region
 import boto3
 
