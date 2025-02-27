@@ -1,4 +1,4 @@
-#Start the Instance
+#terminate the Instance
 import boto3
 region ='region'
 instances =['instance id']
