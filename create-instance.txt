@@ -1,0 +1,40 @@
+import boto3
+
+# Configuration
+region = 'us-east-1'  # Change to your desired AWS region
+ami_id = 'ami-00a929b66ed6e0de6'  # Example: Amazon Linux 2 AMI in us-east-1
+instance_type = 't2.micro'
+key_name = 'awsoffline'  # Replace with your key pair name
+subnet_id = 'subnet-0c7e4187899749bdf'  # Replace with your subnet ID
+security_group_ids = ['sg-09010c7049cc794b7']  # Replace with your security group ID(s)
+
+# Create EC2 client
+ec2 = boto3.client('ec2', region_name=region)
+
+def lambda_handler(event, context):
+    try:
+        response = ec2.run_instances(
+            ImageId=ami_id,
+            InstanceType=instance_type,
+            KeyName=key_name,
+            SubnetId=subnet_id,
+            SecurityGroupIds=security_group_ids,
+            MinCount=1,
+            MaxCount=1,
+            TagSpecifications=[
+                {
+                    'ResourceType': 'instance',
+                    'Tags': [
+                        {'Key': 'Name', 'Value': 'Lambda-Created-Instance'}
+                    ]
+                }
+            ]
+        )
+
+        instance_id = response['Instances'][0]['InstanceId']
+        print(f"EC2 instance created successfully with ID: {instance_id}")
+        return {'status': 'success', 'instance_id': instance_id}
+    
+    except Exception as e:
+        print(f"Error launching EC2 instance: {str(e)}")
+        return {'status': 'error', 'message': str(e)}
